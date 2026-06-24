@@ -1,0 +1,433 @@
+<mxfile host="Electron" pages="2">
+  <diagram name="train" id="trainFlowDiagram">
+    <mxGraphModel dx="1402" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;&lt;b&gt;train.py — Training Pipeline Flow&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#888888&quot;&gt;DINOv3 ViT-B/16 fine-tuning on CUB-200-2011 bird classification&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="500" x="480" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" value="&lt;b&gt;START&lt;/b&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="660" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="11" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;shadow=1;size=14;" value="&lt;b&gt;Set Hyperparameters&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;BATCH=128 | LR=5e-3 | WD=0.01&lt;br&gt;EPOCHS=20 | WARMUP=10%&lt;/font&gt;" vertex="1">
+          <mxGeometry height="75" width="200" x="620" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="12" edge="1" parent="1" source="10" style="endArrow=block;endFill=1;strokeWidth=2;" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Detect Device&lt;/b&gt;&lt;br&gt;CUDA / CPU" vertex="1">
+          <mxGeometry height="45" width="160" x="640" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="14" edge="1" parent="1" source="11" style="endArrow=block;endFill=1;strokeWidth=2;" target="13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;shadow=1;" value="&lt;b&gt;Load Image Processor&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;AutoImageProcessor.from_pretrained&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="220" x="610" y="385" as="geometry" />
+        </mxCell>
+        <mxCell id="16" edge="1" parent="1" source="13" style="endArrow=block;endFill=1;strokeWidth=2;" target="15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;shadow=1;" value="&lt;b&gt;Load DINOv3 Backbone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;AutoModel.from_pretrained&lt;br&gt;(facebook/dinov3-vitb16-pretrain-lvd1689m)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="240" x="600" y="475" as="geometry" />
+        </mxCell>
+        <mxCell id="18" edge="1" parent="1" source="15" style="endArrow=block;endFill=1;strokeWidth=2;" target="17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;shadow=1;" value="&lt;b&gt;Load Dataset&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ImageFolder(CUB_200_2011/images)&lt;br&gt;with dino_transform&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="220" x="610" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="20" edge="1" parent="1" source="17" style="endArrow=block;endFill=1;strokeWidth=2;" target="19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" value="&lt;b&gt;Split Dataset&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;80% Train / 20% Validation&lt;br&gt;(random_split)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="200" x="620" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="22" edge="1" parent="1" source="19" style="endArrow=block;endFill=1;strokeWidth=2;" target="21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="23" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;shadow=1;" value="&lt;b&gt;Create DataLoaders&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;train_loader (shuffle=True)&lt;br&gt;val_loader (shuffle=False)&lt;br&gt;workers=4 | pin_memory | persistent&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="240" x="600" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="24" edge="1" parent="1" source="21" style="endArrow=block;endFill=1;strokeWidth=2;" target="23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;shadow=1;" value="&lt;b&gt;Build DinoV3Linear Model&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Frozen Backbone + Linear Head&lt;br&gt;Linear(hidden_size &amp;rarr; num_classes)&lt;br&gt;Move to device&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="240" x="600" y="875" as="geometry" />
+        </mxCell>
+        <mxCell id="26" edge="1" parent="1" source="23" style="endArrow=block;endFill=1;strokeWidth=2;" target="25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;shadow=1;" value="&lt;b&gt;Training Setup&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Optimizer: AdamW (lr=5e-3, wd=0.01)&lt;br&gt;Scheduler: Cosine + Warmup&lt;br&gt;Loss: CrossEntropyLoss&lt;br&gt;Scaler: GradScaler (AMP)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="85" width="240" x="600" y="985" as="geometry" />
+        </mxCell>
+        <mxCell id="28" edge="1" parent="1" source="25" style="endArrow=block;endFill=1;strokeWidth=2;" target="27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="&lt;b&gt;Init Trackio Logging&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;project=&amp;quot;dinov3&amp;quot;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="180" x="630" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="30" edge="1" parent="1" source="27" style="endArrow=block;endFill=1;strokeWidth=2;" target="29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="40" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#4D4D4D;dashed=1;strokeWidth=2;dashPattern=8 4;" value="" vertex="1">
+          <mxGeometry height="870" width="420" x="510" y="1195" as="geometry" />
+        </mxCell>
+        <mxCell id="41" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=14;fontStyle=1;" value="&lt;font style=&quot;font-size: 14px;&quot; color=&quot;#4D4D4D&quot;&gt;&lt;b&gt;EPOCH LOOP&lt;/b&gt; (1 .. 20)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="25" width="220" x="610" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="42" edge="1" parent="1" source="29" style="endArrow=block;endFill=1;strokeWidth=2;" target="43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="43" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;model.train()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;backbone stays eval() (frozen)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="180" x="630" y="1235" as="geometry" />
+        </mxCell>
+        <mxCell id="50" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;dashed=1;strokeWidth=1.5;dashPattern=6 3;" value="" vertex="1">
+          <mxGeometry height="370" width="350" x="545" y="1310" as="geometry" />
+        </mxCell>
+        <mxCell id="51" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;" value="&lt;font color=&quot;#999999&quot;&gt;&lt;b&gt;BATCH LOOP&lt;/b&gt; (each mini-batch)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="210" x="615" y="1315" as="geometry" />
+        </mxCell>
+        <mxCell id="52" edge="1" parent="1" source="43" style="endArrow=block;endFill=1;strokeWidth=2;" target="53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;Move to Device&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;pixel_values, labels &amp;rarr; GPU&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="180" x="630" y="1345" as="geometry" />
+        </mxCell>
+        <mxCell id="54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="&lt;b&gt;optimizer.zero_grad&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="160" x="640" y="1410" as="geometry" />
+        </mxCell>
+        <mxCell id="55" edge="1" parent="1" source="53" style="endArrow=block;endFill=1;strokeWidth=2;" target="54">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="56" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;shadow=1;" value="&lt;b&gt;Forward Pass (AMP autocast)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;logits = model(pixel_values)&lt;br&gt;loss = CrossEntropy(logits, labels)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="240" x="600" y="1465" as="geometry" />
+        </mxCell>
+        <mxCell id="57" edge="1" parent="1" source="54" style="endArrow=block;endFill=1;strokeWidth=2;" target="56">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="58" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;shadow=1;" value="&lt;b&gt;Backward &amp;amp; Update&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;scaler.scale(loss).backward()&lt;br&gt;scaler.step(optimizer)&lt;br&gt;scaler.update() | scheduler.step()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="240" x="600" y="1555" as="geometry" />
+        </mxCell>
+        <mxCell id="59" edge="1" parent="1" source="56" style="endArrow=block;endFill=1;strokeWidth=2;" target="58">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="60" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;font style=&quot;font-size:10px&quot; color=&quot;#82b366&quot;&gt;&lt;i&gt;every 10 steps:&lt;/i&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;trackio.log&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;train/loss, train/lr&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="170" x="635" y="1640" as="geometry" />
+        </mxCell>
+        <mxCell id="61" edge="1" parent="1" source="58" style="endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;strokeColor=#82b366;" target="60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="62" edge="1" parent="1" style="endArrow=block;endFill=1;strokeWidth=1.5;curved=1;strokeColor=#999999;dashed=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="525" y="1550" />
+              <mxPoint x="525" y="1430" />
+            </Array>
+            <mxPoint x="540" y="1620" as="sourcePoint" />
+            <mxPoint x="540" y="1365" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2mqnnaRlpQW12lTUFQOY-112" connectable="0" parent="62" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Text" vertex="1">
+          <mxGeometry relative="1" x="0.8324" y="-3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="63" parent="1" style="text;html=1;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#999999&quot;&gt;&lt;i&gt;next batch&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="60" x="475" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="70" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;shadow=1;" value="&lt;b&gt;Evaluate Validation Set&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;model.eval() &amp;rarr; compute val_loss, val_acc&lt;br&gt;(no gradient computation)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="240" x="600" y="1720" as="geometry" />
+        </mxCell>
+        <mxCell id="71" edge="1" parent="1" source="60" style="endArrow=block;endFill=1;strokeWidth=2;" target="70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="72" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="&lt;b&gt;Print Epoch Results&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;train_loss | val_loss | val_acc&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="190" x="625" y="1810" as="geometry" />
+        </mxCell>
+        <mxCell id="73" edge="1" parent="1" source="70" style="endArrow=block;endFill=1;strokeWidth=2;" target="72">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="74" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;trackio.log epoch metrics&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;train/epoch_loss | val/loss | val/acc&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="210" x="615" y="1875" as="geometry" />
+        </mxCell>
+        <mxCell id="75" edge="1" parent="1" source="72" style="endArrow=block;endFill=1;strokeWidth=2;" target="74">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="76" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;Save model_last.pt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;save_checkpoint (every epoch)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="180" x="630" y="1945" as="geometry" />
+        </mxCell>
+        <mxCell id="77" edge="1" parent="1" source="74" style="endArrow=block;endFill=1;strokeWidth=2;" target="76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="78" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="&lt;b&gt;val_acc &amp;gt; best_acc?&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="160" x="640" y="2010" as="geometry" />
+        </mxCell>
+        <mxCell id="79" edge="1" parent="1" source="76" style="endArrow=block;endFill=1;strokeWidth=2;" target="78">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="80" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;shadow=1;" value="&lt;b&gt;Save model_best.pt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Update best_acc&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="160" x="850" y="2015" as="geometry" />
+        </mxCell>
+        <mxCell id="81" edge="1" parent="1" source="78" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#82b366;" target="80" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="82" parent="1" style="text;html=1;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size:10px&quot; color=&quot;#b85450&quot;&gt;&lt;b&gt;No&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="30" x="620" y="2025" as="geometry" />
+        </mxCell>
+        <mxCell id="83" edge="1" parent="1" source="78" style="endArrow=block;endFill=1;strokeWidth=1.5;curved=1;strokeColor=#4D4D4D;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="485" y="1800" />
+              <mxPoint x="485" y="1400" />
+            </Array>
+            <mxPoint x="505" y="2040" as="sourcePoint" />
+            <mxPoint x="505" y="1257" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="84" parent="1" style="text;html=1;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size:10px&quot; color=&quot;#4D4D4D&quot;&gt;&lt;i&gt;next epoch&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="65" x="445" y="1620" as="geometry" />
+        </mxCell>
+        <mxCell id="90" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="&lt;b&gt;Print Final Results&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Best val_acc&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="160" x="640" y="2110" as="geometry" />
+        </mxCell>
+        <mxCell id="91" edge="1" parent="1" source="78" style="endArrow=block;endFill=1;strokeWidth=2;" target="90">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="92" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="&lt;b&gt;trackio.finish()&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="140" x="650" y="2185" as="geometry" />
+        </mxCell>
+        <mxCell id="93" edge="1" parent="1" source="90" style="endArrow=block;endFill=1;strokeWidth=2;" target="92">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="94" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;" value="&lt;b&gt;END&lt;/b&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="660" y="2255" as="geometry" />
+        </mxCell>
+        <mxCell id="95" edge="1" parent="1" source="92" style="endArrow=block;endFill=1;strokeWidth=2;" target="94">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="100" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;dino_transform()&lt;/b&gt;&lt;hr&gt;Applied to each image in the dataset:&lt;br&gt;&lt;br&gt;1. &lt;b&gt;img.convert(&amp;quot;RGB&amp;quot;)&lt;/b&gt; — normalize non-RGB images&lt;br&gt;2. &lt;b&gt;AutoImageProcessor(images=img)&lt;/b&gt; — resize, normalize, and convert to pixel_values tensor&lt;br&gt;3. Return the preprocessed tensor" vertex="1">
+          <mxGeometry height="140" width="280" x="140" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="101" edge="1" parent="1" source="100" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="102" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;DinoV3Linear Architecture&lt;/b&gt;&lt;hr&gt;1. &lt;b&gt;DINOv3 ViT-B/16 Backbone&lt;/b&gt; (FROZEN)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;All parameters: requires_grad = False&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Kept in eval() mode always&lt;br&gt;&lt;br&gt;2. &lt;b&gt;Extract CLS Token&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;last_hidden_state[:, 0]&lt;br&gt;&lt;br&gt;3. &lt;b&gt;Linear Head&lt;/b&gt; (trainable)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Linear(hidden_size &amp;rarr; 200 classes)" vertex="1">
+          <mxGeometry height="190" width="280" x="1000" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="103" edge="1" parent="1" source="102" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="104" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;Training Strategy&lt;/b&gt;&lt;hr&gt;&lt;b&gt;AdamW&lt;/b&gt; optimizer with weight decay&lt;br&gt;Only trains the Linear head parameters&lt;br&gt;(backbone is completely frozen)&lt;br&gt;&lt;br&gt;&lt;b&gt;Cosine LR Schedule&lt;/b&gt; with linear warmup:&lt;br&gt;&amp;nbsp;&amp;nbsp;warmup_steps = 10% of total_steps&lt;br&gt;&amp;nbsp;&amp;nbsp;then cosine decay to 0&lt;br&gt;&lt;br&gt;&lt;b&gt;Mixed Precision (AMP)&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;GradScaler for loss scaling&lt;br&gt;&amp;nbsp;&amp;nbsp;autocast for forward pass" vertex="1">
+          <mxGeometry height="200" width="280" x="140" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="105" edge="1" parent="1" source="104" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="106" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;evaluate() Function&lt;/b&gt;&lt;hr&gt;Runs in &lt;b&gt;@torch.no_grad()&lt;/b&gt; context:&lt;br&gt;&lt;br&gt;1. Set model to eval mode&lt;br&gt;2. For each batch in val_loader:&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- Forward pass &amp;rarr; logits&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- Compute loss (CrossEntropy)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- Count correct predictions&lt;br&gt;3. Return (avg_loss, accuracy)" vertex="1">
+          <mxGeometry height="170" width="280" x="1060" y="1680" as="geometry" />
+        </mxCell>
+        <mxCell id="107" edge="1" parent="1" source="106" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="108" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;Checkpoint Contents (save_checkpoint)&lt;/b&gt;&lt;hr&gt;&amp;bull; &lt;b&gt;model_state_dict&lt;/b&gt; — full model weights&lt;br&gt;&amp;bull; &lt;b&gt;optimizer_state_dict&lt;/b&gt;&lt;br&gt;&amp;bull; &lt;b&gt;scheduler_state_dict&lt;/b&gt;&lt;br&gt;&amp;bull; &lt;b&gt;config&lt;/b&gt;:&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- model_name&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- classes (list of 200 bird species)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- backbone config&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- image_processor config&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;- freeze_backbone flag&lt;br&gt;&amp;bull; &lt;b&gt;step&lt;/b&gt;, &lt;b&gt;epoch&lt;/b&gt;, &lt;b&gt;val_acc&lt;/b&gt;" vertex="1">
+          <mxGeometry height="210" width="280" x="1060" y="1880" as="geometry" />
+        </mxCell>
+        <mxCell id="109" edge="1" parent="1" source="108" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="110" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;Forward Pass Detail&lt;/b&gt;&lt;hr&gt;Inside &lt;b&gt;torch.cuda.amp.autocast&lt;/b&gt;:&lt;br&gt;&lt;br&gt;1. &lt;b&gt;Backbone forward&lt;/b&gt; (torch.no_grad)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;outputs = backbone(pixel_values)&lt;br&gt;2. &lt;b&gt;CLS token extraction&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;cls = last_hidden_state[:, 0]&lt;br&gt;3. &lt;b&gt;Linear head&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;logits = head(cls)&lt;br&gt;4. &lt;b&gt;Loss computation&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;loss = CrossEntropy(logits, labels)" vertex="1">
+          <mxGeometry height="200" width="280" x="140" y="1400" as="geometry" />
+        </mxCell>
+        <mxCell id="111" edge="1" parent="1" source="110" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="56">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2mqnnaRlpQW12lTUFQOY-111" parent="1" style="text;html=1;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 10px;&quot; color=&quot;#b85450&quot;&gt;&lt;b&gt;Yes&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="30" x="780" y="2025" as="geometry" />
+        </mxCell>
+        <mxCell id="WMz-RqiShKuDK0hF9vMo-111" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="L" vertex="1">
+          <mxGeometry height="60" width="120" x="1140" y="1120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="AJ7jiDhU4YWGtf_uh9nu" name="infer">
+    <mxGraphModel dx="3505" dy="2150" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pIXotgpNn5jZra5Qxv17-1" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;&lt;b&gt;infer.py — Inference Pipeline Flow&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#888888&quot;&gt;DINOv3 ViT-B/16 bird classification — single-image prediction&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="500" x="500" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" value="&lt;b&gt;START&lt;/b&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="680" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Detect Device&lt;/b&gt;&lt;br&gt;CUDA / CPU" vertex="1">
+          <mxGeometry height="45" width="160" x="660" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-4" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-2" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1565C0;dashed=1;strokeWidth=2;dashPattern=8 4;" value="" vertex="1">
+          <mxGeometry height="530" width="380" x="550" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-6" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=14;fontStyle=1;" value="&lt;font style=&quot;font-size: 14px;&quot; color=&quot;#1565C0&quot;&gt;&lt;b&gt;load_model(ckpt_path, device)&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="25" width="260" x="610" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-7" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-3" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;shadow=1;" value="&lt;b&gt;Load Checkpoint&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;torch.load(model_best.pt, map_location=device)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="240" x="620" y="395" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;shadow=1;" value="&lt;b&gt;Reconstruct Image Processor&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;1. Read image_processor config from ckpt&lt;br&gt;2. Pop &amp;quot;image_processor_type&amp;quot;&lt;br&gt;3. getattr(transformers, type)(**cfg)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="260" x="610" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-10" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-8" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;shadow=1;" value="&lt;b&gt;Reconstruct DINOv3 Backbone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;1. AutoConfig.for_model(**backbone_cfg)&lt;br&gt;2. AutoModel.from_config(config)&lt;br&gt;(random init — weights loaded next)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="260" x="610" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-12" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-9" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;shadow=1;" value="&lt;b&gt;Build DinoV3Linear&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;backbone + Linear(hidden_size &amp;rarr; num_classes)&lt;br&gt;freeze_backbone from ckpt config&lt;br&gt;Move to device&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="240" x="620" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-14" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-11" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;shadow=1;" value="&lt;b&gt;Load Trained Weights&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;model.load_state_dict(ckpt[&amp;quot;model_state_dict&amp;quot;])&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="220" x="630" y="790" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-16" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-13" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" value="&lt;b&gt;model.eval()&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="140" x="670" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-18" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-15" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-19" parent="1" style="text;html=1;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size:10px&quot; color=&quot;#82b366&quot;&gt;&lt;b&gt;returns: (model, image_processor, classes)&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="260" x="630" y="905" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-20" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-17" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;shadow=1;" value="&lt;b&gt;Find Sample Image&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;glob(CUB_200_2011/**/*.jpg)&lt;br&gt;np.random.choice(images)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="220" x="630" y="955" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-22" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="&lt;b&gt;Images found?&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="680" y="1045" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-23" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-21" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;FileNotFoundError&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;No .jpg images found&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="160" x="880" y="1053" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-25" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-22" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450;" target="pIXotgpNn5jZra5Qxv17-24" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-26" parent="1" style="text;html=1;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size:10px&quot; color=&quot;#82b366&quot;&gt;&lt;b&gt;Yes&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="30" x="740" y="1105" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" value="&lt;b&gt;Open Image&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Image.open(image_path)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="160" x="660" y="1140" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-28" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-22" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#B85450;dashed=1;strokeWidth=2;dashPattern=8 4;" value="" vertex="1">
+          <mxGeometry height="420" width="380" x="550" y="1215" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-30" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=14;fontStyle=1;" value="&lt;font style=&quot;font-size: 14px;&quot; color=&quot;#B85450&quot;&gt;&lt;b&gt;infer(model, processor, classes, image, device)&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="25" width="360" x="560" y="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-31" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-27" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Convert to RGB&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;image.convert(&amp;quot;RGB&amp;quot;)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="160" x="660" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-33" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;shadow=1;" value="&lt;b&gt;Preprocess Image&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;image_processor(images=img, return_tensors=&amp;quot;pt&amp;quot;)&lt;br&gt;pixel_values = inputs[&amp;quot;pixel_values&amp;quot;].to(device)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="260" x="610" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-34" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-32" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;shadow=1;" value="&lt;b&gt;Forward Pass&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;@torch.no_grad()&lt;br&gt;logits = model(pixel_values)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="220" x="630" y="1415" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-36" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-33" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-37" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" value="&lt;b&gt;Softmax&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;probs = softmax(logits, dim=-1)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="180" x="650" y="1500" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-38" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-35" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-39" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;shadow=1;" value="&lt;b&gt;Get Prediction&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;pred_idx = probs.argmax(dim=-1)&lt;br&gt;conf = probs[0, pred_idx]&lt;br&gt;pred_class = classes[pred_idx]&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="240" x="620" y="1575" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-40" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-37" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-39">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-41" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;shadow=1;" value="&lt;b&gt;Print Result&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Image: &amp;lt;path&amp;gt;&lt;br&gt;Predicted: &amp;lt;class&amp;gt;, Conf: &amp;lt;score&amp;gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="220" x="630" y="1675" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-42" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-39" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-43" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;" value="&lt;b&gt;END&lt;/b&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="680" y="1765" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-44" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-41" style="endArrow=block;endFill=1;strokeWidth=2;" target="pIXotgpNn5jZra5Qxv17-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-45" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;Checkpoint Structure Used&lt;/b&gt;&lt;hr&gt;&lt;b&gt;ckpt[&amp;quot;config&amp;quot;]&lt;/b&gt;:&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;#x251C;&amp;#x2500; &lt;b&gt;image_processor&lt;/b&gt; (dict)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;#x2502;&amp;nbsp;&amp;nbsp;&amp;#x2514;&amp;#x2500; image_processor_type&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;#x251C;&amp;#x2500; &lt;b&gt;backbone&lt;/b&gt; (dict)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;#x251C;&amp;#x2500; &lt;b&gt;classes&lt;/b&gt; (list of 200 bird species)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;#x2514;&amp;#x2500; &lt;b&gt;freeze_backbone&lt;/b&gt; (bool)&lt;br&gt;&lt;br&gt;&lt;b&gt;ckpt[&amp;quot;model_state_dict&amp;quot;]&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;Full model weights (backbone + head)" vertex="1">
+          <mxGeometry height="200" width="290" x="1060" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-46" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-45" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="pIXotgpNn5jZra5Qxv17-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-47" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;Dynamic Processor Reconstruction&lt;/b&gt;&lt;hr&gt;The image processor class is &lt;b&gt;not hardcoded&lt;/b&gt;. Instead:&lt;br&gt;&lt;br&gt;1. The processor &lt;b&gt;type name&lt;/b&gt; is stored as a string in the checkpoint config&lt;br&gt;&lt;br&gt;2. &lt;b&gt;getattr(transformers, type)&lt;/b&gt; dynamically resolves the class at runtime&lt;br&gt;&lt;br&gt;3. Remaining config keys are passed as &lt;b&gt;**kwargs&lt;/b&gt; to the constructor&lt;br&gt;&lt;br&gt;This makes the checkpoint portable across different processor versions." vertex="1">
+          <mxGeometry height="210" width="290" x="120" y="415" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-48" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-47" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="pIXotgpNn5jZra5Qxv17-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-49" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;from_config vs from_pretrained&lt;/b&gt;&lt;hr&gt;During &lt;b&gt;training&lt;/b&gt;:&lt;br&gt;&amp;nbsp;&amp;nbsp;AutoModel.&lt;b&gt;from_pretrained&lt;/b&gt;()&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;rarr; Downloads pretrained weights from HuggingFace&lt;br&gt;&lt;br&gt;During &lt;b&gt;inference&lt;/b&gt;:&lt;br&gt;&amp;nbsp;&amp;nbsp;AutoModel.&lt;b&gt;from_config&lt;/b&gt;()&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;rarr; Creates model architecture only (random init)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;rarr; Weights loaded from checkpoint next&lt;br&gt;&lt;br&gt;No internet connection needed for inference!" vertex="1">
+          <mxGeometry height="210" width="290" x="120" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-50" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-49" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="pIXotgpNn5jZra5Qxv17-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-51" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;model(pixel_values) Internals&lt;/b&gt;&lt;hr&gt;Inside DinoV3Linear.forward():&lt;br&gt;&lt;br&gt;1. &lt;b&gt;Backbone forward pass&lt;/b&gt; (torch.no_grad)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;outputs = backbone(pixel_values)&lt;br&gt;&lt;br&gt;2. &lt;b&gt;CLS token extraction&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;cls = last_hidden_state[:, 0]&lt;br&gt;&lt;br&gt;3. &lt;b&gt;Linear classification head&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;logits = head(cls)&lt;br&gt;&lt;br&gt;Returns raw logits (unnormalized scores)" vertex="1">
+          <mxGeometry height="210" width="290" x="1060" y="1335" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-52" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-51" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="pIXotgpNn5jZra5Qxv17-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-53" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;Post-Processing Pipeline&lt;/b&gt;&lt;hr&gt;1. &lt;b&gt;Softmax&lt;/b&gt; converts raw logits to a &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;probability distribution over 200 classes&lt;br&gt;&lt;br&gt;2. &lt;b&gt;Argmax&lt;/b&gt; selects the class with &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;the highest probability&lt;br&gt;&lt;br&gt;3. &lt;b&gt;Confidence&lt;/b&gt; = probability of the&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;predicted class&lt;br&gt;&lt;br&gt;4. &lt;b&gt;Class name&lt;/b&gt; = classes[pred_idx]&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;maps index back to bird species name" vertex="1">
+          <mxGeometry height="200" width="290" x="1060" y="1575" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-54" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-53" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="pIXotgpNn5jZra5Qxv17-39">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-55" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;size=14;shadow=1;" value="&lt;b&gt;Key Differences from train.py&lt;/b&gt;&lt;hr&gt;&amp;bull; &lt;b&gt;No optimizer&lt;/b&gt;, scheduler, or loss fn&lt;br&gt;&amp;bull; &lt;b&gt;No DataLoader&lt;/b&gt; — single image at a time&lt;br&gt;&amp;bull; &lt;b&gt;No gradient&lt;/b&gt; computation (@torch.no_grad)&lt;br&gt;&amp;bull; &lt;b&gt;Softmax applied&lt;/b&gt; to get probabilities&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;(training uses raw logits + CrossEntropy)&lt;br&gt;&amp;bull; Backbone rebuilt &lt;b&gt;from_config&lt;/b&gt; (not&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;from_pretrained) — no internet needed&lt;br&gt;&amp;bull; Imports &lt;b&gt;DinoV3Linear class&lt;/b&gt; from train.py" vertex="1">
+          <mxGeometry height="190" width="290" x="120" y="1285" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-56" edge="1" parent="1" source="pIXotgpNn5jZra5Qxv17-55" style="endArrow=open;strokeWidth=1;dashed=1;strokeColor=#D6B656;" target="pIXotgpNn5jZra5Qxv17-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIXotgpNn5jZra5Qxv17-57" parent="1" style="text;html=1;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 10px;&quot; color=&quot;#82b366&quot;&gt;&lt;b&gt;No&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="30" x="817" y="1053" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
